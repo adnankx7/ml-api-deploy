@@ -1,0 +1,28 @@
+name: Deploy ML API to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          cd ~/ml-project
+          git pull https://github.com/adnankx7/ml-api-deploy.git main
+          docker stop ml-container || true
+          docker rm ml-container || true
+          docker build -t ml-api .
+          docker run -d -p 8000:8000 --name ml-container ml-api
+          echo "Deployment complete!"
