@@ -18,7 +18,11 @@ class HouseInput(BaseModel):
     
 @app.get("/")
 def home():
-    return {"status":"ML API chal rahi hai"}
+    return {
+        "status": "ML API EC2 pe chal rahi hai!",
+        "version": "2.0",
+        "deployed_by": "GitHub Actions CI/CD"
+        }
 
 
 @app.post("/predict")
